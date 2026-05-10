@@ -1,0 +1,16 @@
+digraph Logo {
+    graph [bgcolor="#0d1117", pad=0.4, size="8,2", ratio=fill];
+    node  [fontname="Helvetica-Bold", style=filled, margin="0.2,0.1"];
+    edge  [style=invis];
+
+    TITLE [label="GPU THERMAL WORLOCK", shape=none, fontsize=28, fontcolor="#e94560", fontname="Helvetica-Bold"];
+
+    GPU0 [label="RTX 5080\nBlackwell\n300W cap", shape=box3d, fillcolor="#1a1a2e", fontcolor="#e94560", fontsize=11, width=1.6];
+    GPU1 [label="RTX 3080\nAmpere\n300W · 70°C", shape=box3d, fillcolor="#1a1a2e", fontcolor="#4fc3f7", fontsize=11, width=1.6];
+
+    TEMP [label="Thermal\nManagement\nworlock · 2026", shape=oval, fillcolor="#e94560", fontcolor=white, fontsize=11, width=1.6];
+
+    TITLE -> GPU0;
+    TITLE -> TEMP;
+    TITLE -> GPU1;
+}

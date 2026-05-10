@@ -1,0 +1,44 @@
+digraph ServiceDependencies {
+    rankdir=TB;
+    graph [fontname="Helvetica", fontsize=13, label="systemd Service Dependency Graph\nGPU Thermal Stack — worlock", labelloc=t, pad=0.5, splines=polyline];
+    node  [fontname="Helvetica", fontsize=11, style=filled, shape=box, margin="0.3,0.15"];
+    edge  [fontname="Helvetica", fontsize=9];
+
+    // Boot targets
+    SYSINIT [label="sysinit.target", shape=oval, fillcolor="#1a1a2e", fontcolor=white];
+    BASIC   [label="basic.target", shape=oval, fillcolor="#1a1a2e", fontcolor=white];
+    MULTI   [label="multi-user.target", shape=oval, fillcolor="#1a1a2e", fontcolor=white];
+
+    // NVIDIA services
+    PERSD   [label="nvidia-persistenced.service\n● active · running\nKeeps GPU contexts across\napp lifecycle", fillcolor="#f5a623", fontcolor="#1a1a2e", width=3.0];
+
+    // Thermal services
+    ECO     [label="gpu-eco-mode.service\n● active · exited (oneshot)\nApplies eco settings at boot\nRemainAfterExit=yes", fillcolor="#0f3460", fontcolor=white, width=3.0];
+    WD      [label="gpu-watchdog.service\n● active · running\nLoad-based eco/perf switching\nRestart=always", fillcolor="#0f3460", fontcolor=white, width=3.0];
+
+    // Workload services
+    OLLAMA  [label="ollama.service\n● active · running\n:11434 · GPU 0+1\nKEEP_ALIVE=60m", fillcolor="#4caf50", fontcolor=white, width=3.0];
+    OLLAMA2 [label="ollama-coder.service\n● active · running\n:11435 · GPU 1 only", fillcolor="#4caf50", fontcolor=white, width=3.0];
+    PROXY   [label="ollama-proxy.service\n● activating · auto-restart\nOpenAI-compat proxy", fillcolor="#888888", fontcolor=white, width=3.0];
+    WEBUI   [label="open-webui (Docker)\n● running · :3000\nhost network mode", fillcolor="#4caf50", fontcolor=white, width=3.0];
+
+    // Scripts (not services)
+    TOG     [label="gpu_power_toggle.sh\n[script, not a service]\ncalled by eco + watchdog", shape=note, fillcolor="#fff8e1", fontcolor="#1a1a2e", fontsize=10];
+    WDSH    [label="gpu_watchdog.sh\n[script, not a service]\nexec'd by watchdog daemon", shape=note, fillcolor="#fff8e1", fontcolor="#1a1a2e", fontsize=10];
+
+    // Dependency edges
+    SYSINIT -> BASIC  [label="after"];
+    BASIC   -> MULTI  [label="after"];
+    BASIC   -> PERSD  [label="after"];
+    PERSD   -> ECO    [label="After= / Wants=", color="#f5a623"];
+    PERSD   -> WD     [label="After= / Wants=", color="#f5a623"];
+    ECO     -> MULTI  [label="WantedBy="];
+    WD      -> MULTI  [label="WantedBy="];
+    MULTI   -> OLLAMA [label="WantedBy="];
+    MULTI   -> OLLAMA2[label="WantedBy="];
+    MULTI   -> PROXY  [label="WantedBy="];
+
+    ECO -> TOG  [label="ExecStart=", style=dashed, color="#4fc3f7"];
+    WD  -> WDSH [label="ExecStart=", style=dashed, color="#4fc3f7"];
+    WDSH -> TOG [label="calls", style=dashed, color="#4fc3f7"];
+}

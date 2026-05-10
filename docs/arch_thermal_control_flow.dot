@@ -1,0 +1,47 @@
+digraph ThermalControlFlow {
+    rankdir=LR;
+    graph [fontname="Helvetica", fontsize=13, label="Thermal Control Flow — Boot to Steady State", labelloc=t, pad=0.5];
+    node  [fontname="Helvetica", fontsize=11, style=filled, shape=box, margin="0.25,0.12"];
+    edge  [fontname="Helvetica", fontsize=9];
+
+    // Boot sequence
+    BOOT   [label="System Boot", shape=oval, fillcolor="#1a1a2e", fontcolor=white];
+    KERNEL [label="Kernel Loads\nNVIDIA Driver\n580.142", fillcolor="#16213e", fontcolor=white];
+    PERSD  [label="nvidia-persistenced\nstarts · enables\npersistence mode", fillcolor="#f5a623", fontcolor="#1a1a2e"];
+    ECOSVC [label="gpu-eco-mode.service\noneshot fires", fillcolor="#0f3460", fontcolor=white];
+    TOGGLE [label="gpu_power_toggle.sh eco\napplies settings", fillcolor="#4fc3f7", fontcolor="#1a1a2e"];
+
+    // Settings applied
+    subgraph cluster_settings {
+        label="Settings Applied"; style=filled; fillcolor="#e8f5e9"; color="#4caf50"; fontname="Helvetica"; fontsize=10;
+        S1 [label="GPU 0 (5080)\n-pm 1\n-pl 300W", fillcolor="#e94560", fontcolor=white, shape=note];
+        S2 [label="GPU 1 (3080)\n-pm 1\n-pl 300W\n-lgc 210\n-lmc 405\n-gtt 70°C", fillcolor="#4fc3f7", fontcolor="#1a1a2e", shape=note];
+    }
+
+    WDSVC  [label="gpu-watchdog.service\ndaemon starts", fillcolor="#0f3460", fontcolor=white];
+    STEADY [label="Steady State\nGPUs thermally\nconstrained", shape=oval, fillcolor="#4caf50", fontcolor=white];
+
+    // Runtime watchdog loop
+    subgraph cluster_watchdog {
+        label="Runtime Watchdog Loop (10s)"; style=filled; fillcolor="#fff8e1"; color="#f5a623"; fontname="Helvetica"; fontsize=10;
+        POLL   [label="Poll GPU 1\nutilization", fillcolor="#f5a623", fontcolor="#1a1a2e", shape=diamond];
+        TOPERF [label="Switch → PERF\nauto clocks\n300W caps hold", fillcolor="#e94560", fontcolor=white];
+        TOECO  [label="Switch → ECO\nlocked clocks\nafter 60s idle", fillcolor="#0f3460", fontcolor=white];
+        POLL -> TOPERF [xlabel=">2% util", color="#e94560"];
+        POLL -> TOECO  [xlabel="60s idle", color="#4fc3f7"];
+        TOPERF -> POLL;
+        TOECO  -> POLL;
+    }
+
+    // Main flow
+    BOOT   -> KERNEL;
+    KERNEL -> PERSD;
+    PERSD  -> ECOSVC [label="After="];
+    ECOSVC -> TOGGLE;
+    TOGGLE -> S1;
+    TOGGLE -> S2;
+    S1     -> WDSVC;
+    S2     -> WDSVC;
+    WDSVC  -> POLL;
+    WDSVC  -> STEADY;
+}

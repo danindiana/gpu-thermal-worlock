@@ -1,0 +1,51 @@
+digraph PowerBudget {
+    rankdir=LR;
+    graph [fontname="Helvetica", fontsize=13, label="Power Budget — Default vs Capped\nRTX 5080 + RTX 3080", labelloc=t, pad=0.5];
+    node  [fontname="Helvetica", fontsize=10, style=filled, shape=box, margin="0.2,0.1"];
+    edge  [fontname="Helvetica", fontsize=9, style=invis];
+
+    subgraph cluster_5080 {
+        label="RTX 5080 (Blackwell) — GPU 0"; style=filled; fillcolor="#1a1a2e"; color="#e94560";
+        fontname="Helvetica"; fontsize=11; fontcolor=white;
+
+        A1 [label="Min\n250W", fillcolor="#16213e", fontcolor="#aaaaaa", width=1.0];
+        A2 [label="ECO CAP\n300W\n(this repo)", fillcolor="#e94560", fontcolor=white, width=1.2];
+        A3 [label="DEFAULT\n360W", fillcolor="#444444", fontcolor=white, width=1.2];
+        A4 [label="MAX TDP\n400W", fillcolor="#880000", fontcolor=white, width=1.0];
+
+        A1 -> A2 -> A3 -> A4;
+
+        SAV5 [label="Saved: 60W\n(17% reduction)\nfrom default", shape=note, fillcolor="#fff8e1", fontcolor="#1a1a2e", fontsize=10];
+        A2 -> SAV5 [style=dashed, color="#f5a623"];
+    }
+
+    subgraph cluster_3080 {
+        label="RTX 3080 (Ampere) — GPU 1"; style=filled; fillcolor="#1a1a2e"; color="#4fc3f7";
+        fontname="Helvetica"; fontsize=11; fontcolor=white;
+
+        B1 [label="Min\n100W", fillcolor="#16213e", fontcolor="#aaaaaa", width=1.0];
+        B2 [label="ECO LOCKED\n~46W idle\n(lgc 210MHz)", fillcolor="#0f3460", fontcolor=white, width=1.4];
+        B3 [label="ECO CAP\n300W\n(this repo)", fillcolor="#4fc3f7", fontcolor="#1a1a2e", width=1.2];
+        B4 [label="DEFAULT\n340W", fillcolor="#444444", fontcolor=white, width=1.2];
+        B5 [label="MAX TDP\n375W", fillcolor="#880000", fontcolor=white, width=1.0];
+
+        B1 -> B2 -> B3 -> B4 -> B5;
+
+        SAV3 [label="Saved: 40W\n(12% reduction)\nfrom default", shape=note, fillcolor="#fff8e1", fontcolor="#1a1a2e", fontsize=10];
+        GTT  [label="Target Temp\n70°C (-gtt)\nRange: 65–91°C", shape=note, fillcolor="#e3f2fd", fontcolor="#1a1a2e", fontsize=10];
+        B3 -> SAV3 [style=dashed, color="#f5a623"];
+        B3 -> GTT  [style=dashed, color="#4fc3f7"];
+    }
+
+    subgraph cluster_total {
+        label="Combined Budget"; style=filled; fillcolor="#0f3460"; color="#4caf50";
+        fontname="Helvetica"; fontsize=11; fontcolor=white;
+
+        TOT_DEFAULT [label="Default Total\n700W\n(360 + 340)", fillcolor="#444444", fontcolor=white, width=1.6];
+        TOT_CAPPED  [label="Capped Total\n600W\n(300 + 300)", fillcolor="#4caf50", fontcolor=white, width=1.6];
+        TOT_SAVE    [label="Total Saved\n100W\n(14% reduction)", shape=note, fillcolor="#fff8e1", fontcolor="#1a1a2e", fontsize=10];
+
+        TOT_DEFAULT -> TOT_CAPPED [style=solid, label="this repo", color="#4caf50"];
+        TOT_CAPPED  -> TOT_SAVE  [style=dashed, color="#f5a623"];
+    }
+}

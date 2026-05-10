@@ -1,0 +1,65 @@
+digraph SystemOverview {
+    rankdir=TB;
+    graph [fontname="Helvetica", fontsize=13, label="System Architecture Overview — worlock\nDual-GPU Thermal Management", labelloc=t, pad=0.5, splines=polyline];
+    node  [fontname="Helvetica", fontsize=11, style=filled, shape=box, margin="0.25,0.12"];
+    edge  [fontname="Helvetica", fontsize=9];
+
+    // Hardware layer
+    subgraph cluster_hw {
+        label="Hardware"; style=filled; fillcolor="#1a1a2e"; color="#e94560"; fontcolor=white; fontname="Helvetica"; fontsize=11;
+
+        CPU   [label="CPU\nAMD/Intel\nHost", shape=box3d, fillcolor="#16213e", fontcolor=white];
+        RAM   [label="System RAM\nDDR5", shape=box3d, fillcolor="#16213e", fontcolor=white];
+        PCIE  [label="PCIe Bus\nGen 4/5", shape=ellipse, fillcolor="#0f3460", fontcolor=white];
+        GPU0  [label="GPU 0\nRTX 5080\nBlackwell\n~16 GB VRAM", shape=box3d, fillcolor="#e94560", fontcolor=white, width=1.8];
+        GPU1  [label="GPU 1\nRTX 3080\nAmpere\n~10 GB VRAM", shape=box3d, fillcolor="#4fc3f7", fontcolor="#1a1a2e", width=1.8];
+
+        CPU -> PCIE;
+        RAM -> CPU;
+        PCIE -> GPU0;
+        PCIE -> GPU1;
+    }
+
+    // Driver layer
+    subgraph cluster_driver {
+        label="NVIDIA Driver Stack"; style=filled; fillcolor="#16213e"; color="#f5a623"; fontcolor=white; fontname="Helvetica"; fontsize=11;
+
+        DRV   [label="Driver 580.142\nCUDA 13.0", fillcolor="#f5a623", fontcolor="#1a1a2e"];
+        PERSD [label="nvidia-persistenced\n(systemd, active)", fillcolor="#f5a623", fontcolor="#1a1a2e"];
+        NSMI  [label="nvidia-smi\nControl Interface", fillcolor="#f5a623", fontcolor="#1a1a2e"];
+
+        DRV -> PERSD;
+        DRV -> NSMI;
+    }
+
+    // Thermal management layer
+    subgraph cluster_thermal {
+        label="Thermal Management (this repo)"; style=filled; fillcolor="#0f3460"; color="#4fc3f7"; fontcolor=white; fontname="Helvetica"; fontsize=11;
+
+        ECO   [label="gpu-eco-mode.service\noneshot · runs at boot", fillcolor="#0f3460", fontcolor=white];
+        WD    [label="gpu-watchdog.service\ndaemon · 10s poll", fillcolor="#0f3460", fontcolor=white];
+        TOG   [label="gpu_power_toggle.sh\neco | perf", fillcolor="#4fc3f7", fontcolor="#1a1a2e"];
+        WDSH  [label="gpu_watchdog.sh\nutilization monitor", fillcolor="#4fc3f7", fontcolor="#1a1a2e"];
+
+        ECO -> TOG;
+        WD  -> WDSH;
+        WDSH -> TOG;
+    }
+
+    // Workload layer
+    subgraph cluster_workload {
+        label="Workloads"; style=filled; fillcolor="#1a1a2e"; color="#4caf50"; fontcolor=white; fontname="Helvetica"; fontsize=11;
+
+        OLLAMA [label="Ollama\nLLM Inference\n:11434", fillcolor="#4caf50", fontcolor=white];
+        DOCKER [label="OpenWebUI\nDocker · :3000", fillcolor="#4caf50", fontcolor=white];
+
+        OLLAMA -> GPU0 [style=dashed, color="#4caf50", label="CUDA_VISIBLE_DEVICES=0,1"];
+        DOCKER -> GPU0 [style=dashed, color="#4caf50"];
+    }
+
+    // Cross-layer edges
+    PERSD -> ECO  [label="After=", color="#f5a623"];
+    PERSD -> WD   [label="After=", color="#f5a623"];
+    NSMI  -> GPU0 [label="-pl 300W", color="#e94560"];
+    NSMI  -> GPU1 [label="-pl 300W\n-gtt 70°C", color="#4fc3f7"];
+}
