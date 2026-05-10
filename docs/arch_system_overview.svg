@@ -173,14 +173,14 @@
 <title>NSMI&#45;&gt;GPU0</title>
 <path fill="none" stroke="#e94560" d="M292.12,-310.53C307.41,-303.21 321,-296.7 321,-296.7 321,-296.7 472,-256 472,-256 472,-256 478.75,-251.62 488.18,-245.5"/>
 <polygon fill="#e94560" stroke="#e94560" points="490.16,-248.4 496.64,-240.02 486.35,-242.52 490.16,-248.4"/>
-<text text-anchor="middle" x="458.5" y="-271.8" font-family="Helvetica,sans-Serif" font-size="9.00">&#45;pl 300W</text>
+<text text-anchor="middle" x="458.5" y="-271.8" font-family="Helvetica,sans-Serif" font-size="9.00">&#45;pl 275W</text>
 </g>
 <!-- NSMI&#45;&gt;GPU1 -->
 <g id="edge15" class="edge">
 <title>NSMI&#45;&gt;GPU1</title>
 <path fill="none" stroke="#4fc3f7" d="M259.3,-310.69C268.43,-291.04 281,-264 281,-264 281,-264 311,-256 311,-256 311,-256 319.42,-251.35 331.03,-244.95"/>
 <polygon fill="#4fc3f7" stroke="#4fc3f7" points="332.9,-247.91 339.97,-240.02 329.52,-241.78 332.9,-247.91"/>
-<text text-anchor="middle" x="299.5" y="-276.8" font-family="Helvetica,sans-Serif" font-size="9.00">&#45;pl 300W</text>
+<text text-anchor="middle" x="299.5" y="-276.8" font-family="Helvetica,sans-Serif" font-size="9.00">&#45;pl 275W</text>
 <text text-anchor="middle" x="299.5" y="-266.8" font-family="Helvetica,sans-Serif" font-size="9.00">&#45;gtt 70°C</text>
 </g>
 <!-- TOG -->

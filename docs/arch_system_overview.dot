@@ -60,6 +60,6 @@ digraph SystemOverview {
     // Cross-layer edges
     PERSD -> ECO  [label="After=", color="#f5a623"];
     PERSD -> WD   [label="After=", color="#f5a623"];
-    NSMI  -> GPU0 [label="-pl 300W", color="#e94560"];
-    NSMI  -> GPU1 [label="-pl 300W\n-gtt 70°C", color="#4fc3f7"];
+    NSMI  -> GPU0 [label="-pl 275W", color="#e94560"];
+    NSMI  -> GPU1 [label="-pl 275W\n-gtt 70°C", color="#4fc3f7"];
 }

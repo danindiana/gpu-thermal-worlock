@@ -40,7 +40,7 @@ digraph FutureDirections {
         fontname="Helvetica"; fontsize=11; fontcolor="#1a1a2e";
         style=filled; fillcolor="#e8f5e9"; color="#4caf50";
 
-        F7 [label="7. Full Cold Reboot\nValidation\nConfirm 300W caps +\n70°C target survive boot", fillcolor="#4caf50", fontcolor=white];
+        F7 [label="7. Full Cold Reboot\nValidation\nConfirm 275W caps +\n70°C target survive boot", fillcolor="#4caf50", fontcolor=white];
     }
 
     // Priority annotations

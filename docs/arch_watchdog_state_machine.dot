@@ -7,9 +7,9 @@ digraph WatchdogStateMachine {
     // States
     INIT  [label="INIT\nWatchdog Started\nMonitoring GPU 1", shape=oval, fillcolor="#1a1a2e", fontcolor=white];
 
-    ECO   [label="STATE: ECO\n──────────────\nGPU 0 (5080): 300W\nGPU 1 (3080): 300W\nClocks: locked\n210 MHz GPU / 405 MHz Mem\nTarget Temp: 70°C\nTypical: 46W · 54°C", shape=box, fillcolor="#0f3460", fontcolor=white, width=3];
+    ECO   [label="STATE: ECO\n──────────────\nGPU 0 (5080): 275W\nGPU 1 (3080): 275W\nClocks: locked\n210 MHz GPU / 405 MHz Mem\nTarget Temp: 70°C\nTypical: 46W · 54°C", shape=box, fillcolor="#0f3460", fontcolor=white, width=3];
 
-    PERF  [label="STATE: PERF\n──────────────\nGPU 0 (5080): 300W\nGPU 1 (3080): 300W\nClocks: auto\nTarget Temp: 70°C\nTypical: 124W · 59°C", shape=box, fillcolor="#e94560", fontcolor=white, width=3];
+    PERF  [label="STATE: PERF\n──────────────\nGPU 0 (5080): 275W\nGPU 1 (3080): 275W\nClocks: auto (~2700–2900 MHz)\nTarget Temp: 70°C\nTypical: 124W · 59°C", shape=box, fillcolor="#e94560", fontcolor=white, width=3];
 
     // Poll node
     POLL  [label="Poll every 10s\nnvidia-smi util + compute apps\nGPU 1 only", shape=diamond, fillcolor="#f5a623", fontcolor="#1a1a2e", width=2.5];
@@ -30,7 +30,7 @@ digraph WatchdogStateMachine {
     IDLE -> ECO  [label="idle_count >= 6\n(60s idle)\nswitch to ECO", color="#4caf50", fontcolor="#4caf50"];
 
     // Annotations
-    NOTE1 [label="Both modes enforce\n300W cap on both GPUs\n-gtt 70°C on 3080 always set", shape=note, fillcolor="#fff9c4", fontsize=10];
+    NOTE1 [label="Both modes enforce\n275W cap on both GPUs\n-gtt 70°C on 3080 always set", shape=note, fillcolor="#fff9c4", fontsize=10];
     NOTE2 [label="Watchdog monitors\nGPU 1 (3080) only\nboth GPUs get mode switch", shape=note, fillcolor="#fff9c4", fontsize=10];
 
     ECO  -> NOTE1 [style=dashed, color="#999999"];

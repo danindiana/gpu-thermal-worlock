@@ -1,15 +1,15 @@
 [gpu.rtx5080]
 id = 0
 name = "RTX 5080 (Blackwell)"
-power_eco = 300
-power_perf = 300
+power_eco = 275
+power_perf = 275
 gtt_supported = false
 
 [gpu.rtx3080]
 id = 1
 name = "RTX 3080 (Ampere)"
-power_eco = 300
-power_perf = 300
+power_eco = 275
+power_perf = 275
 target_temp = 70
 clock_mem_eco = 405
 clock_gpu_eco = 210

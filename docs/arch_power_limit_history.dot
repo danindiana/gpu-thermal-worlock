@@ -1,0 +1,87 @@
+digraph PowerLimitHistory {
+    rankdir=LR;
+    graph [fontname="Helvetica", fontsize=13,
+           label="GPU Power Limit History — worlock\nRTX 5080 (GPU 0) + RTX 3080 (GPU 1)",
+           labelloc=t, pad=0.6, splines=polyline, bgcolor="#0d0d1a", nodesep=0.6, ranksep=1.2];
+    node  [fontname="Helvetica", fontsize=10, style=filled, shape=box, margin="0.3,0.2"];
+    edge  [fontname="Helvetica", fontsize=9];
+
+    // ── Timeline nodes (events) ───────────────────────────────────────────────
+
+    EV0 [label="2026-05-01\nRTX 5080 installed\n1200W PSU\nCMOS reset",
+         shape=oval, fillcolor="#1a1a2e", fontcolor="#aaaacc", width=2.2];
+
+    EV1 [label="2026-05-01\nPost-install state\nDriver 580.142 / CUDA 13.0\nFactory defaults active",
+         fillcolor="#16213e", fontcolor=white, width=2.6];
+
+    EV2 [label="2026-05-04\nRTX 3080 idle investigation\nRoot cause: HDMI display\nFix: cable move → −90W idle\nNo power limit change",
+         fillcolor="#0f3460", fontcolor="#4fc3f7", width=2.8];
+
+    EV3 [label="2026-05-10 (early)\ngpu-eco-mode.service deployed\nPython pynvml refactor\nInitial power caps applied",
+         fillcolor="#333311", fontcolor="#f5a623", width=2.8];
+
+    EV4 [label="2026-05-10 (this session)\nnvidia-power-limit.service\nFurther reduction applied\nPersistence verified",
+         fillcolor="#4caf50", fontcolor=white, width=2.8, penwidth=2];
+
+    // ── GPU 0 state at each event ─────────────────────────────────────────────
+
+    subgraph cluster_gpu0 {
+        label="GPU 0 — RTX 5080 (Blackwell)";
+        style=filled; fillcolor="#1a0d1e"; color="#e94560";
+        fontname="Helvetica"; fontsize=11; fontcolor="#e94560";
+
+        G0E0 [label="—\n(not yet installed)", fillcolor="#111111", fontcolor="#555555", shape=note];
+        G0E1 [label="Limit: 360W (factory)\nVRAM: 16 GB GDDR7\nBoost: 3090 MHz max",
+              fillcolor="#440011", fontcolor="#ff6688"];
+        G0E2 [label="Limit: 360W (unchanged)\nDraw at idle: ~38W\n(display on 5080)",
+              fillcolor="#550022", fontcolor="#ff6688"];
+        G0E3 [label="Limit: 300W\n(−60W from default)\nBoost: ~2800–3000 MHz",
+              fillcolor="#883333", fontcolor=white];
+        G0E4 [label="Limit: 275W  ✦\n(−85W from default, −25W step)\nBoost: ~2700–2900 MHz",
+              fillcolor="#e94560", fontcolor=white, penwidth=2];
+    }
+
+    // ── GPU 1 state at each event ─────────────────────────────────────────────
+
+    subgraph cluster_gpu1 {
+        label="GPU 1 — RTX 3080 (Ampere)";
+        style=filled; fillcolor="#0d1a1e"; color="#4fc3f7";
+        fontname="Helvetica"; fontsize=11; fontcolor="#4fc3f7";
+
+        G1E0 [label="Limit: 340W (prior system)\nVRAM: 10 GB GDDR6X\nBoost: 2100 MHz max",
+              fillcolor="#002233", fontcolor="#66ddff"];
+        G1E1 [label="Limit: 340W (unchanged)\nDraw at idle: ~100W\n(display locked P0)",
+              fillcolor="#002233", fontcolor="#66ddff"];
+        G1E2 [label="Limit: 340W\nDraw at idle: ~16W  ✓\n(display moved, P8 reached)",
+              fillcolor="#004455", fontcolor="#66ddff"];
+        G1E3 [label="Limit: 300W\n(−40W from default)\nBoost: ~1900–2050 MHz",
+              fillcolor="#1a5a7a", fontcolor=white];
+        G1E4 [label="Limit: 275W  ✦\n(−65W from default, −25W step)\nBoost: ~1800–1950 MHz",
+              fillcolor="#4fc3f7", fontcolor="#0d1a1e", penwidth=2];
+    }
+
+    // ── Timeline edges ────────────────────────────────────────────────────────
+
+    EV0 -> EV1 -> EV2 -> EV3 -> EV4 [color="#555577", style=bold];
+
+    // GPU 0 column
+    EV0 -> G0E0 [style=dashed, color="#333355"];
+    EV1 -> G0E1 [color="#e94560"];
+    EV2 -> G0E2 [color="#e94560"];
+    EV3 -> G0E3 [color="#f5a623"];
+    EV4 -> G0E4 [color="#4caf50", penwidth=2];
+
+    // GPU 1 column
+    EV0 -> G1E0 [color="#4fc3f7"];
+    EV1 -> G1E1 [color="#4fc3f7"];
+    EV2 -> G1E2 [color="#4caf50", label="cable fix"];
+    EV3 -> G1E3 [color="#f5a623"];
+    EV4 -> G1E4 [color="#4caf50", penwidth=2];
+
+    // ── Total combined budget annotation ──────────────────────────────────────
+
+    BUDGET [label="Combined Budget\n──────────────\n700W factory default\n600W initial cap  (−100W, 14%)\n550W current  ✦  (−150W, 21%)",
+            shape=note, fillcolor="#1a2a1a", fontcolor="#4caf50", fontsize=11, penwidth=2];
+
+    EV4 -> BUDGET [style=dashed, color="#4caf50", label="net savings"];
+}

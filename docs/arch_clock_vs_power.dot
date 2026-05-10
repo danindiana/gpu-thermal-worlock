@@ -1,0 +1,61 @@
+digraph ClockVsPower {
+    rankdir=TB;
+    graph [fontname="Helvetica", fontsize=13,
+           label="GPU Clock Speed vs. Power Limit — worlock\nRTX 5080 (Blackwell) + RTX 3080 (Ampere)",
+           labelloc=t, pad=0.6, splines=polyline, bgcolor="#0d0d1a"];
+    node  [fontname="Helvetica", fontsize=11, style=filled, shape=box, margin="0.3,0.15"];
+    edge  [fontname="Helvetica", fontsize=9, color="#555577"];
+
+    // ── RTX 5080 column ──────────────────────────────────────────────────────
+    subgraph cluster_5080 {
+        label="RTX 5080 — GPU 0 (Blackwell, GDDR7)";
+        style=filled; fillcolor="#1a0d1e"; color="#e94560";
+        fontname="Helvetica"; fontsize=11; fontcolor="#e94560";
+
+        C5_MAX  [label="Factory TDP: 360W\nMax Boost: 3090 MHz\nMem: 15001 MHz GDDR7",
+                 fillcolor="#440011", fontcolor="#ff6688", shape=box3d, width=2.6];
+        C5_300  [label="Prior Cap: 300W\nBoost: ~2800–3000 MHz\nMem: 15001 MHz (unchanged)",
+                 fillcolor="#331122", fontcolor="#cc4466", shape=box, width=2.6];
+        C5_275  [label="Current Cap: 275W  ✦\nBoost: ~2700–2900 MHz\nMem: 15001 MHz (unchanged)\nIdle observed: 2610 MHz",
+                 fillcolor="#e94560", fontcolor=white, shape=box, width=2.6, penwidth=2];
+        C5_ECO  [label="N/A — Blackwell has no\nlocked-clock ECO mode\n(-lgc not supported)",
+                 fillcolor="#1a1a2e", fontcolor="#666688", shape=note, width=2.6];
+
+        C5_MAX -> C5_300 [label="initial cap\n(−60W)", color="#f5a623", fontcolor="#f5a623"];
+        C5_300 -> C5_275 [label="this session\n(−25W)", color="#4caf50", fontcolor="#4caf50"];
+        C5_275 -> C5_ECO [style=dashed, label="ECO mode", color="#555577"];
+    }
+
+    // ── RTX 3080 column ──────────────────────────────────────────────────────
+    subgraph cluster_3080 {
+        label="RTX 3080 — GPU 1 (Ampere, GDDR6X)";
+        style=filled; fillcolor="#0d1a1e"; color="#4fc3f7";
+        fontname="Helvetica"; fontsize=11; fontcolor="#4fc3f7";
+
+        C3_MAX  [label="Factory TDP: 340W\nMax Boost: 2100 MHz\nMem: 9501 MHz GDDR6X",
+                 fillcolor="#002233", fontcolor="#66ddff", shape=box3d, width=2.6];
+        C3_300  [label="Prior Cap: 300W\nBoost: ~1900–2050 MHz\nMem: 9501 MHz (unchanged)",
+                 fillcolor="#001a2e", fontcolor="#44aacc", shape=box, width=2.6];
+        C3_275  [label="Current Cap: 275W  ✦\nBoost: ~1800–1950 MHz\nMem: 9501 MHz (unchanged)\nIdle observed: 1785 MHz",
+                 fillcolor="#4fc3f7", fontcolor="#0d1a1e", shape=box, width=2.6, penwidth=2];
+        C3_ECO  [label="ECO Mode (watchdog)\nGPU locked: 210 MHz\nMem locked: 405 MHz\nPower cap: 275W still enforced\nTypical draw: ~46W",
+                 fillcolor="#0f3460", fontcolor=white, shape=box, width=2.6];
+
+        C3_MAX -> C3_300 [label="initial cap\n(−40W)", color="#f5a623", fontcolor="#f5a623"];
+        C3_300 -> C3_275 [label="this session\n(−25W)", color="#4caf50", fontcolor="#4caf50"];
+        C3_275 -> C3_ECO [label="ECO mode\n(watchdog idle)", color="#4fc3f7", fontcolor="#4fc3f7"];
+    }
+
+    // ── Notes ─────────────────────────────────────────────────────────────────
+    subgraph cluster_notes {
+        label="Key Notes"; style=filled; fillcolor="#1a1a2e"; color="#f5a623";
+        fontname="Helvetica"; fontsize=10; fontcolor="#f5a623";
+
+        N1 [label="Memory clock is NOT power-gated\nGDDR7/GDDR6X run at rated speed\nregardless of power cap",
+            shape=note, fillcolor="#2a2a0e", fontcolor="#f5a623", fontsize=10];
+        N2 [label="For LLM inference: memory bandwidth\nmatters more than compute clock.\n275W cap has negligible impact\non token/s vs 300W.",
+            shape=note, fillcolor="#2a2a0e", fontcolor="#f5a623", fontsize=10];
+        N3 [label="Boost clocks self-regulate:\nGPU draws up to cap, then\nfrequency drops to stay within budget.\nNo manual clock locking needed for 5080.",
+            shape=note, fillcolor="#2a2a0e", fontcolor="#f5a623", fontsize=10];
+    }
+}

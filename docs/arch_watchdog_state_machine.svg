@@ -25,8 +25,8 @@
 <polygon fill="#0f3460" stroke="black" points="519,-548 303,-548 303,-430 519,-430 519,-548"/>
 <text text-anchor="middle" x="411" y="-528.2" font-family="Helvetica,sans-Serif" font-size="11.00" fill="white">STATE: ECO</text>
 <text text-anchor="middle" x="411" y="-516.2" font-family="Helvetica,sans-Serif" font-size="11.00" fill="white">──────────────</text>
-<text text-anchor="middle" x="411" y="-504.2" font-family="Helvetica,sans-Serif" font-size="11.00" fill="white">GPU 0 (5080): 300W</text>
-<text text-anchor="middle" x="411" y="-492.2" font-family="Helvetica,sans-Serif" font-size="11.00" fill="white">GPU 1 (3080): 300W</text>
+<text text-anchor="middle" x="411" y="-504.2" font-family="Helvetica,sans-Serif" font-size="11.00" fill="white">GPU 0 (5080): 275W</text>
+<text text-anchor="middle" x="411" y="-492.2" font-family="Helvetica,sans-Serif" font-size="11.00" fill="white">GPU 1 (3080): 275W</text>
 <text text-anchor="middle" x="411" y="-480.2" font-family="Helvetica,sans-Serif" font-size="11.00" fill="white">Clocks: locked</text>
 <text text-anchor="middle" x="411" y="-468.2" font-family="Helvetica,sans-Serif" font-size="11.00" fill="white">210 MHz GPU / 405 MHz Mem</text>
 <text text-anchor="middle" x="411" y="-456.2" font-family="Helvetica,sans-Serif" font-size="11.00" fill="white">Target Temp: 70°C</text>
@@ -61,7 +61,7 @@
 <polyline fill="none" stroke="black" points="561.5,-341.5 561.5,-335.5 "/>
 <polyline fill="none" stroke="black" points="567.5,-335.5 561.5,-335.5 "/>
 <text text-anchor="middle" x="482" y="-322.5" font-family="Helvetica,sans-Serif" font-size="10.00">Both modes enforce</text>
-<text text-anchor="middle" x="482" y="-311.5" font-family="Helvetica,sans-Serif" font-size="10.00">300W cap on both GPUs</text>
+<text text-anchor="middle" x="482" y="-311.5" font-family="Helvetica,sans-Serif" font-size="10.00">275W cap on both GPUs</text>
 <text text-anchor="middle" x="482" y="-300.5" font-family="Helvetica,sans-Serif" font-size="10.00">&#45;gtt 70°C on 3080 always set</text>
 </g>
 <!-- ECO&#45;&gt;NOTE1 -->
@@ -76,9 +76,9 @@
 <polygon fill="#e94560" stroke="black" points="218,-198 2,-198 2,-92 218,-92 218,-198"/>
 <text text-anchor="middle" x="110" y="-178.2" font-family="Helvetica,sans-Serif" font-size="11.00" fill="white">STATE: PERF</text>
 <text text-anchor="middle" x="110" y="-166.2" font-family="Helvetica,sans-Serif" font-size="11.00" fill="white">──────────────</text>
-<text text-anchor="middle" x="110" y="-154.2" font-family="Helvetica,sans-Serif" font-size="11.00" fill="white">GPU 0 (5080): 300W</text>
-<text text-anchor="middle" x="110" y="-142.2" font-family="Helvetica,sans-Serif" font-size="11.00" fill="white">GPU 1 (3080): 300W</text>
-<text text-anchor="middle" x="110" y="-130.2" font-family="Helvetica,sans-Serif" font-size="11.00" fill="white">Clocks: auto</text>
+<text text-anchor="middle" x="110" y="-154.2" font-family="Helvetica,sans-Serif" font-size="11.00" fill="white">GPU 0 (5080): 275W</text>
+<text text-anchor="middle" x="110" y="-142.2" font-family="Helvetica,sans-Serif" font-size="11.00" fill="white">GPU 1 (3080): 275W</text>
+<text text-anchor="middle" x="110" y="-130.2" font-family="Helvetica,sans-Serif" font-size="11.00" fill="white">Clocks: auto (~2700–2900 MHz)</text>
 <text text-anchor="middle" x="110" y="-118.2" font-family="Helvetica,sans-Serif" font-size="11.00" fill="white">Target Temp: 70°C</text>
 <text text-anchor="middle" x="110" y="-106.2" font-family="Helvetica,sans-Serif" font-size="11.00" fill="white">Typical: 124W · 59°C</text>
 </g>
