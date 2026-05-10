@@ -92,6 +92,22 @@ To change limits in the future: edit `ExecStart=` in the service file, then
 
 ---
 
+## How the Power Cap and Clock Speed Relate
+
+We did not configure clock speeds directly. The power limit is the only control we adjusted; clock speed is a side effect that falls out automatically.
+
+Each GPU has a built-in governor that asks thousands of times per second: "how much power budget do I have?" The boost clock — how fast the compute cores run — is what it adjusts to stay within that ceiling. When the GPU approaches 275W under load, the driver quietly steps the clock down until the draw fits. When load eases and headroom opens up, the clock rises again. This happens continuously and invisibly.
+
+**Practical example:** the RTX 5080 can run at 3090 MHz flat-out, which might cost ~310W. With a 275W ceiling the driver settles the clock to roughly 2700–2900 MHz under inference — a 5–8% clock reduction in exchange for a 24% reduction from factory TDP. At idle we observed 2610 MHz; the RTX 3080 idled at 1785 MHz.
+
+**The one place clocks are hard-locked — RTX 3080 ECO mode:**
+
+The watchdog daemon pins the 3080 to 210 MHz (compute) / 405 MHz (memory) when Ollama is not running. This is a deliberate lock, not a power-budget consequence. It prevents the card from drawing ~100W at idle because a monitor is attached (the root cause identified in the 2026-05-04 session). The lock releases instantly when any inference load appears.
+
+**Memory clock is never power-gated.** GDDR7 and GDDR6X run on a separate power rail. Memory bandwidth — which dominates LLM inference performance — is unaffected by the power cap.
+
+---
+
 ## GPU State After Change
 
 | Field | RTX 5080 (GPU 0) | RTX 3080 (GPU 1) |

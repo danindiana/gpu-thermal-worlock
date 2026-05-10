@@ -201,12 +201,24 @@ The `nvidia-power-limit.service` was added as a lightweight safety net — it ru
 | RTX 3080 (Ampere) | 2100 MHz | 1785 MHz | ~1800–1950 MHz | 9501 MHz GDDR6X |
 | RTX 3080 — ECO mode | — | 210 MHz (locked) | 210 MHz (locked) | 405 MHz (locked) |
 
+### How the power cap and clock speed relate
+
+**We did not configure clock speeds directly.** The power limit is the only dial we turned; the clock speed is a consequence that falls out automatically.
+
+Each GPU has a built-in governor that asks thousands of times per second: "how much power do I have left to spend?" The boost clock — how fast the compute cores run — is what it adjusts to stay within that budget. When the GPU is working hard and approaches the 275W ceiling, the driver quietly steps the clock down until the draw fits. When load eases and power headroom opens up, the clock steps back up. This happens continuously and invisibly.
+
+**Practical example:** the RTX 5080 wants to run at 3090 MHz at full throttle. Sustaining 3090 MHz might cost ~310W. Since our ceiling is 275W, the driver settles the clock to wherever 275W lands — roughly 2700–2900 MHz under inference load. That's a 5–8% clock reduction in exchange for a 24% power reduction from factory TDP.
+
+**The one place clocks are directly locked — RTX 3080 ECO mode:**
+
+The RTX 3080, when Ollama is not running, has its clocks *hard-pinned* to 210 MHz (compute) and 405 MHz (memory) by the watchdog daemon. This is a deliberate lock, not a power-budget side effect. It prevents the card from drawing ~100W at idle just because a monitor is attached — a problem identified and diagnosed in the 2026-05-04 session. The watchdog releases the lock instantly when any inference load appears.
+
 **Key points:**
 
-- **Memory clock is not power-gated.** GDDR7 and GDDR6X run on a separate power rail and remain at rated frequency regardless of the power cap. The memory bus is always at full bandwidth.
-- **Compute clock self-regulates.** The GPU boosts as high as the power budget allows, then throttles frequency to stay within the 275W ceiling. No manual clock locking is needed for the RTX 5080.
-- **For LLM inference, memory bandwidth dominates.** Weight loading from VRAM is the bottleneck in autoregressive decoding, not GPU compute frequency. A 5–8% reduction in sustained boost clock (from 3090 MHz at 360W to ~2800 MHz at 275W) has negligible impact on tokens/second.
-- **RTX 3080 ECO mode** locks clocks drastically (210 MHz / 405 MHz) to minimize idle power draw. This is only active when Ollama is not running — the watchdog immediately switches to PERF mode on any compute load.
+- **Memory clock is not power-gated.** GDDR7 and GDDR6X run on a separate power rail and stay at rated frequency regardless of the power cap. The memory bus is always at full bandwidth.
+- **Compute clock self-regulates.** The GPU boosts as high as the power budget allows, then throttles to stay within the 275W ceiling. No manual clock locking is needed for the RTX 5080.
+- **For LLM inference, memory bandwidth dominates.** Weight loading from VRAM is the bottleneck in autoregressive decoding, not compute frequency. A 5–8% clock reduction has negligible impact on tokens/second.
+- **RTX 3080 ECO mode** hard-locks clocks to 210/405 MHz to eliminate idle drain. This is active only when Ollama is not running — the watchdog switches to PERF (auto clocks) the moment any compute load appears.
 
 ---
 
