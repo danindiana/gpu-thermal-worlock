@@ -1,0 +1,12 @@
+[Unit]
+Description=Set NVIDIA GPU to ECO Mode on Boot
+After=nvidia-persistenced.service
+Wants=nvidia-persistenced.service
+
+[Service]
+Type=oneshot
+ExecStart=/home/jeb/programs/gemini_cli_workspace/ampere-vision-archival/gpu_power_toggle.sh eco
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

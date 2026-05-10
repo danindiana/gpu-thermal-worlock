@@ -1,0 +1,13 @@
+[Unit]
+Description=NVIDIA GPU Power Management Watchdog
+After=nvidia-persistenced.service gpu-eco-mode.service
+Wants=nvidia-persistenced.service
+
+[Service]
+Type=simple
+ExecStart=/home/jeb/programs/gemini_cli_workspace/ampere-vision-archival/tools/gpu_watchdog.sh
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
