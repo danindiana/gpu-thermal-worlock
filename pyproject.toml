@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gpu-thermal"
+version = "1.0.0"
+description = "GPU thermal management for worlock — RTX 5080 + RTX 3080"
+requires-python = ">=3.10"
+dependencies = [
+    "nvidia-ml-py>=13.0.0",
+    "sdnotify>=0.3.2",
+]
+
+[project.scripts]
+gpu-thermal = "gpu_thermal.cli:main"
+gpu-watchdog = "gpu_thermal.watchdog:main"
